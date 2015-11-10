@@ -63,10 +63,11 @@ public class ClientSocketTCP {
                 
                 switch(tipoMensaje){
                     case 0:
-                        ChatWindow.gui.ActualizarNotificaciones(line);
+                        //ChatWindow.gui.ActualizarNotificaciones(line);
+                        System.out.println(line);
                         break;
                     case 1:
-                        System.out.println("Es un mensaje de chat");
+                        ChatWindow.gui.ActualizarNotificaciones(line);
                         break;
                 }
             }
