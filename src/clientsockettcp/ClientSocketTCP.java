@@ -64,12 +64,14 @@ public class ClientSocketTCP {
                 switch(tipoMensaje){
                     case 0:
                         ChatWindow.gui.ActualizarNotificaciones(line);
-                        System.out.println(line);
                         break;
                     case 1:
                         ChatWindow.gui.ActualizarNotificaciones(line);
                         break;
                     case 2:
+                        ChatWindow.gui.ActualizarNotificaciones(line);
+                        break;
+                    case 3:
                         ChatWindow.gui.ActualizarNotificaciones(line);
                         break;
                 }
@@ -88,7 +90,11 @@ public class ClientSocketTCP {
         try{
             output.writeByte(tipoMensaje);
             ChatWindow.gui.ActualizarNotificaciones("Tú: " + mensaje);
-            output.writeUTF(emisor + ": " + mensaje + puertoCliente);
+            if(tipoMensaje == 3){
+                output.writeUTF(emisor + ":" + mensaje.substring(mensaje.indexOf(' '), mensaje.length()) + mensaje.substring(mensaje.indexOf('@'), mensaje.indexOf(' ')));
+            }else{
+                output.writeUTF(emisor + ": " + mensaje + puertoCliente);
+            }
             output.flush();
         }
         catch(IOException e){
@@ -100,7 +106,7 @@ public class ClientSocketTCP {
     private void sendUserValues(String username){
         try{
             output.writeByte(0);
-            output.writeUTF(username);
+            output.writeUTF(username + getPortClient());
             output.flush();
         }
         catch(IOException e){

@@ -139,17 +139,14 @@ public class ChatWindow extends javax.swing.JFrame {
 
     private void btnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarActionPerformed
         // TODO add your handling code here:
-            System.out.println("Entro al evento");
         if(txtMensaje.getText().length() > 0){
             String mensaje = txtMensaje.getText();
-            System.out.println("Entro al evento ahora si " + mensaje);
             if(mensaje.substring(0, 1).equals("@")){
                 // Es un mensaje dirigido a un usuario
-                System.out.println("El mensaje va dirigido a alguien.");
+                client.sendMessage(txtMensaje.getText(), nombreUsuario, 3, client.getPortClient());
             }else{
                 // Es un mensaje broadcast
                 client.sendMessage(txtMensaje.getText(), nombreUsuario, 1, client.getPortClient());
-                System.out.println("El mensaje es broadcast");
             }
             txtMensaje.setText("");
         }
