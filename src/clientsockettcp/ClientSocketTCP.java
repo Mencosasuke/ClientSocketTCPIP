@@ -78,7 +78,7 @@ public class ClientSocketTCP {
             }
             catch(IOException e){
                 //System.out.println("Error en envío: " + e.getMessage());
-                ChatWindow.gui.ActualizarNotificaciones("Error en escucha: " + e.getMessage());
+                ChatWindow.gui.ActualizarNotificaciones("El servidor no esta disponible o se ha desconectado. " + e.getMessage());
                 done = true;
                 stop();
             }
