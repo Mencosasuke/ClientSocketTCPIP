@@ -7,6 +7,8 @@
 package clientsockettcp;
 
 import javax.swing.JOptionPane;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -15,7 +17,12 @@ import javax.swing.JOptionPane;
 public class ChatWindow extends javax.swing.JFrame {
     
     static ChatWindow gui = new ChatWindow();
-
+    
+    private static final String IPADDRESS_PATTERN = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])$|(localhost)";
+    static String ipAddress = "";
+    
+    
+    
     private StringBuilder sbMensajes = new StringBuilder();
     private ClientSocketTCP client = new ClientSocketTCP();
     private String nombreUsuario = "";
@@ -119,7 +126,7 @@ public class ChatWindow extends javax.swing.JFrame {
         if(txtUsername.getText().length() > 0){
             nombreUsuario = txtUsername.getText();
             
-            client.ChatClient("localhost", 1122, nombreUsuario);
+            client.ChatClient(ipAddress, 1122, nombreUsuario);
 
             btnConectar.setEnabled(false);
 
@@ -190,6 +197,19 @@ public class ChatWindow extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 //new ChatWindow().setVisible(true);
+                //JOptionPane.showInputDialog(null, "Mensaje prueba", "Titulo", JOptionPane.DEFAULT_OPTION, null, null, "Jalapeño");
+                Pattern pattern;
+                Matcher matcher;
+                pattern = Pattern.compile(IPADDRESS_PATTERN);
+                do{
+                    ipAddress = JOptionPane.showInputDialog(null, "Introduzca una IP válida (Server IP):");
+                    if (ipAddress == null)
+                    {
+                        System.exit(0);
+                    }
+                    matcher = pattern.matcher(ipAddress);
+                }while(!matcher.matches());
+                
                 gui.setVisible(true);
                 gui.setTitle("Chat Cliente");
                 gui.setLocationRelativeTo(null);
