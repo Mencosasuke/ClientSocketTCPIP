@@ -12,9 +12,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.URLDecoder;
 import java.net.UnknownHostException;
+import java.util.UUID;
 
 /**
  *
@@ -82,6 +85,30 @@ public class ClientSocketTCP {
                     case 3:
                         ChatWindow.gui.ActualizarNotificaciones(line);
                         break;
+                    case 4:
+                        String nombreArchivo = line.toString();
+                        int tam = input.readInt();
+                        System.out.println("Recibiendo archivo " + nombreArchivo);
+
+                        String path = ChatWindow.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+                        String decodedPath = URLDecoder.decode(path, "UTF-8");
+                        String fullPath = decodedPath + UUID.randomUUID().toString().substring(0, 13) + nombreArchivo;
+
+                        FileOutputStream fos = new FileOutputStream(fullPath);
+                        BufferedOutputStream out = new BufferedOutputStream(fos);
+                        BufferedInputStream in = new BufferedInputStream(client.getInputStream());
+
+                        byte[] buffer = new byte[tam];
+
+                        for(int i = 0; i < buffer.length; i++){
+                            buffer[i] = (byte)in.read();
+                        }
+
+                        out.write(buffer);
+                        out.flush();
+//                        in.close();
+                        out.close();
+                        break;
                 }
             }
             catch(IOException e){
@@ -132,13 +159,6 @@ public class ClientSocketTCP {
 //            bis.read(buffer, 0, buffer.length);
             switch(tipoMensaje){
                 case 4:
-                    // Envía alerta que se enviará el archivo y de quien
-//                    output.writeByte(1);
-//                    output.writeUTF(emisor + ": Esta enviando un archivo (" + archivo.getName() + ")." + puertoCliente);
-//                    output.flush();
-//                    try{
-//                        Thread.sleep(1000);
-//                    }catch(InterruptedException ie){ }
                     // Envía el archivo
                     Socket socket = new Socket(ChatWindow.ipAddress, 1122);
                     DataOutputStream dos = new DataOutputStream(socket.getOutputStream() );
@@ -161,11 +181,6 @@ public class ClientSocketTCP {
                     bis.close();
                     bos.close();
                     socket.close();
-                    
-//                    //output.writeUTF("holis!");
-//                    //output.write(buffer, 0, buffer.length);
-//                    output.writeLong(buffer.length);
-//                    output.flush();
                     break;
                 case 5:
 //                    // Envía alerta que se enviará el archivo y de quien
