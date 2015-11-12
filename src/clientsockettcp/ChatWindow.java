@@ -51,6 +51,7 @@ public class ChatWindow extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         txtMensaje = new javax.swing.JTextArea();
         btnEnviar = new javax.swing.JButton();
+        btnSendFile = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(430, 380));
@@ -65,12 +66,17 @@ public class ChatWindow extends javax.swing.JFrame {
             }
         });
 
+        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
         txtRespuesta.setEditable(false);
         txtRespuesta.setColumns(20);
         txtRespuesta.setRows(5);
         jScrollPane1.setViewportView(txtRespuesta);
 
+        jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
         txtMensaje.setColumns(20);
+        txtMensaje.setLineWrap(true);
         txtMensaje.setRows(5);
         jScrollPane2.setViewportView(txtMensaje);
 
@@ -78,6 +84,13 @@ public class ChatWindow extends javax.swing.JFrame {
         btnEnviar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEnviarActionPerformed(evt);
+            }
+        });
+
+        btnSendFile.setText("Adjuntar");
+        btnSendFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSendFileActionPerformed(evt);
             }
         });
 
@@ -92,7 +105,9 @@ public class ChatWindow extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEnviar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnEnviar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnSendFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblUsername)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -112,9 +127,12 @@ public class ChatWindow extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnEnviar, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnEnviar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnSendFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
 
@@ -159,11 +177,16 @@ public class ChatWindow extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnEnviarActionPerformed
 
+    private void btnSendFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendFileActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnSendFileActionPerformed
+
     public void ActualizarNotificaciones(String mensaje){
         sbMensajes.append(mensaje);
         sbMensajes.append("\n");
         txtRespuesta.setText(sbMensajes.toString());
         txtRespuesta.update(txtRespuesta.getGraphics());
+        txtRespuesta.setCaretPosition(txtRespuesta.getDocument().getLength());
     }
     
     /**
@@ -220,6 +243,7 @@ public class ChatWindow extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnConectar;
     private javax.swing.JButton btnEnviar;
+    private javax.swing.JButton btnSendFile;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblUsername;
