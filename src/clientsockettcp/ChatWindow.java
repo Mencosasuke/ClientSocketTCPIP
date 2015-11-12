@@ -191,6 +191,7 @@ public class ChatWindow extends javax.swing.JFrame {
                 client.sendFile(archivo, null, nombreUsuario, 4, client.getPortClient());
                 txtMensaje.setText("");
             }
+            archivo = null;
         }else{
             if(txtMensaje.getText().length() > 0){
                 String mensaje = txtMensaje.getText().trim();

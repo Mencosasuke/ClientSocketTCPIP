@@ -7,6 +7,7 @@
 package clientsockettcp;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -37,6 +38,8 @@ public class ClientSocketTCP {
         ChatWindow.gui.ActualizarNotificaciones("Estableciendo conexión...");
         try{
             client = new Socket(serverName, serverPort);
+            client.setKeepAlive(true);
+            
             //System.out.println("Conectado: " + client);
             ChatWindow.gui.ActualizarNotificaciones("Conectado: " + client);
             start();
@@ -123,21 +126,56 @@ public class ClientSocketTCP {
     public void sendFile(File archivo, String receptor, String emisor, int tipoMensaje, int puertoCliente){
         try{
             ChatWindow.gui.ActualizarNotificaciones("Tú: Enviando archivo " + archivo.getName() + "...");
-            int count;
-            byte[] buffer = new byte[(int)archivo.length()];
-            fis = new FileInputStream(archivo);
-            bis = new BufferedInputStream(fis);
-            bis.read(buffer, 0, buffer.length);
+//            byte[] buffer = new byte[(int)archivo.length()];
+//            fis = new FileInputStream(archivo);
+//            bis = new BufferedInputStream(fis);
+//            bis.read(buffer, 0, buffer.length);
             switch(tipoMensaje){
                 case 4:
-                    output.writeByte(1);
-                    output.writeUTF(emisor + ": Esta enviando un archivo (" + archivo.getName() + ")." + puertoCliente);
-                    output.flush();
+                    // Envía alerta que se enviará el archivo y de quien
+//                    output.writeByte(1);
+//                    output.writeUTF(emisor + ": Esta enviando un archivo (" + archivo.getName() + ")." + puertoCliente);
+//                    output.flush();
+//                    try{
+//                        Thread.sleep(1000);
+//                    }catch(InterruptedException ie){ }
+                    // Envía el archivo
+                    Socket socket = new Socket(ChatWindow.ipAddress, 1122);
+                    DataOutputStream dos = new DataOutputStream(socket.getOutputStream() );
+                    int tamañoArchivo = (int)archivo.length();
+                    
+                    dos.writeByte(4);
+                    dos.writeUTF(archivo.getName());
+                    dos.writeInt(tamañoArchivo);
+                    
+                    FileInputStream fis = new FileInputStream(archivo.getPath());
+                    BufferedInputStream bis = new BufferedInputStream(fis);
+                    BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
+                    byte[] buffer = new byte[tamañoArchivo];
+                    bis.read(buffer);
+                    
+                    for(int i = 0; i < buffer.length; i++){ 
+                        bos.write(buffer[i]);  
+                    }
+                    
+                    bis.close();
+                    bos.close();
+                    socket.close();
+                    
+//                    //output.writeUTF("holis!");
+//                    //output.write(buffer, 0, buffer.length);
+//                    output.writeLong(buffer.length);
+//                    output.flush();
                     break;
                 case 5:
-                    output.writeByte(3);
-                    output.writeUTF(emisor + ": Esta enviando un archivo (" + archivo.getName() + ")." + receptor);
-                    output.flush();
+//                    // Envía alerta que se enviará el archivo y de quien
+//                    output.writeByte(3);
+//                    output.writeUTF(emisor + ": Esta enviando un archivo (" + archivo.getName() + ")." + receptor);
+//                    output.flush();
+//                    // Envía el archivo
+//                    output.writeByte(5);
+//                    output.write(buffer, 0, buffer.length);
+//                    output.flush();
                     break;
             }
         }
