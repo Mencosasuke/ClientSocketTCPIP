@@ -6,8 +6,11 @@
 
 package clientsockettcp;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -26,6 +29,8 @@ public class ClientSocketTCP {
     private DataInputStream input = null;
     private DataOutputStream output = null;
     private String username = "";
+    private FileInputStream fis = null;
+    private BufferedInputStream bis = null;
     
     public void ChatClient(String serverName, int serverPort, String username){
         //System.out.println("Estableciendo conexión...");
@@ -108,6 +113,33 @@ public class ClientSocketTCP {
             output.writeByte(0);
             output.writeUTF(username + getPortClient());
             output.flush();
+        }
+        catch(IOException e){
+            //System.out.println("Error en envío: " + e.getMessage());
+            ChatWindow.gui.ActualizarNotificaciones("Error en envío: " + e.getMessage());
+        }
+    }
+    
+    public void sendFile(File archivo, String receptor, String emisor, int tipoMensaje, int puertoCliente){
+        try{
+            ChatWindow.gui.ActualizarNotificaciones("Tú: Enviando archivo " + archivo.getName() + "...");
+            int count;
+            byte[] buffer = new byte[(int)archivo.length()];
+            fis = new FileInputStream(archivo);
+            bis = new BufferedInputStream(fis);
+            bis.read(buffer, 0, buffer.length);
+            switch(tipoMensaje){
+                case 4:
+                    output.writeByte(1);
+                    output.writeUTF(emisor + ": Esta enviando un archivo (" + archivo.getName() + ")." + puertoCliente);
+                    output.flush();
+                    break;
+                case 5:
+                    output.writeByte(3);
+                    output.writeUTF(emisor + ": Esta enviando un archivo (" + archivo.getName() + ")." + receptor);
+                    output.flush();
+                    break;
+            }
         }
         catch(IOException e){
             //System.out.println("Error en envío: " + e.getMessage());

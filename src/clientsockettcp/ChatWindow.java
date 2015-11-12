@@ -6,9 +6,14 @@
 
 package clientsockettcp;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import javax.swing.JOptionPane;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.JFileChooser;
 
 /**
  *
@@ -21,7 +26,9 @@ public class ChatWindow extends javax.swing.JFrame {
     private static final String IPADDRESS_PATTERN = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])$|(localhost)";
     static String ipAddress = "";
     
+    private File archivo = null;
     
+    private JFileChooser chooser = new JFileChooser();
     
     private StringBuilder sbMensajes = new StringBuilder();
     private ClientSocketTCP client = new ClientSocketTCP();
@@ -164,21 +171,51 @@ public class ChatWindow extends javax.swing.JFrame {
 
     private void btnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarActionPerformed
         // TODO add your handling code here:
-        if(txtMensaje.getText().length() > 0){
-            String mensaje = txtMensaje.getText();
-            if(mensaje.substring(0, 1).equals("@")){
-                // Es un mensaje dirigido a un usuario
-                client.sendMessage(txtMensaje.getText(), nombreUsuario, 3, client.getPortClient());
+        if(archivo != null){
+//            ActualizarNotificaciones("Enviaras el archivo: " + archivo.getName());
+            String mensaje = txtMensaje.getText().trim();
+            if(mensaje.length() > 0){
+                if(mensaje.substring(0, 1).equals("@")){
+                    // Es un mensaje dirigido a un usuario
+                    String user = "";
+                    if(mensaje.indexOf(' ') > 0){
+                        user = mensaje.substring(0, mensaje.indexOf(' '));
+                    }else{
+                        user = mensaje.substring(0, mensaje.length());
+                    }
+                    client.sendFile(archivo, user, nombreUsuario, 5, client.getPortClient());
+                    txtMensaje.setText("");
+                }
             }else{
                 // Es un mensaje broadcast
-                client.sendMessage(txtMensaje.getText(), nombreUsuario, 1, client.getPortClient());
+                client.sendFile(archivo, null, nombreUsuario, 4, client.getPortClient());
+                txtMensaje.setText("");
             }
-            txtMensaje.setText("");
+        }else{
+            if(txtMensaje.getText().length() > 0){
+                String mensaje = txtMensaje.getText().trim();
+                if(mensaje.substring(0, 1).equals("@")){
+                    // Es un mensaje dirigido a un usuario
+                    if(mensaje.indexOf(' ') > 0){
+                        client.sendMessage(txtMensaje.getText(), nombreUsuario, 3, client.getPortClient());
+                        txtMensaje.setText("");
+                    }
+                }else{
+                    // Es un mensaje broadcast
+                    client.sendMessage(txtMensaje.getText(), nombreUsuario, 1, client.getPortClient());
+                    txtMensaje.setText("");
+                }
+            }
         }
     }//GEN-LAST:event_btnEnviarActionPerformed
 
     private void btnSendFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendFileActionPerformed
         // TODO add your handling code here:
+        int returnVal = chooser.showOpenDialog(this);
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            //ActualizarNotificaciones("Elegiste el archivo: " + chooser.getSelectedFile().getName());
+            archivo = chooser.getSelectedFile();
+        }
     }//GEN-LAST:event_btnSendFileActionPerformed
 
     public void ActualizarNotificaciones(String mensaje){
